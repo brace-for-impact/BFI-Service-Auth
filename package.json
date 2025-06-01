@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "build": "npx tsc",
-    "start": "NODE_ENV=production node dist/server.js"
+    "start": "NODE_ENV=production node dist/server.js",
+    "update:bfi": "npm install @brace-for-impact/bfi-shared@latest"
   },
   "keywords": [],
   "author": "",
@@ -20,8 +21,9 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@brace-for-impact/bfi-shared": "latest",
+    "@brace-for-impact/bfi-shared": "^1.0.11",
     "dotenv": "^16.5.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "express-async-handler": "^1.2.0"
   }
 }
