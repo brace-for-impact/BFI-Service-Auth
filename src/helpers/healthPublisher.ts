@@ -1,23 +1,24 @@
 import shared from "@brace-for-impact/bfi-shared";
+import { config } from "../config";
 let intervalId: NodeJS.Timeout | null = null;
 
 const publishHealth = () => {
   if (!intervalId) {
     console.log("Starting health publishing...");
     intervalId = setInterval(async() => {
-      const key = "health_status";
+      console.log({event: 'sending health to kafka'})
       const value = JSON.stringify({
         healthStatus: "Auth server is healthy",
-        apiRequestPerSecond:
-          shared.middlewares.requestCounterService.getRequestsPerSecond(),
-        docker_info:
-          await shared.services.dockerServices.services?.getContainerServices({
-            networkName: "bfi-infrastructure_bfi-dev-net",
-          }),
+        clientId: config.clientId,
+        apiRequestPerSecond: shared.middlewares.requestCounterService.getRequestsPerSecond(),
+        // dockerInfo: await shared.services.dockerServices.services?.getContainerServices({ networkName: "bfi-infrastructure_bfi-dev-net", }),
+        dockerInfo: await shared.services.dockerServices.services?.getContainerInfo(),
+        nodeInfo: shared.services.nodeServices.getNodeProcessInfo({ requestsPerSecond: 1 }),
+        hostInfo: await shared.services.hostServices.getHostInfo(),
       });
       shared.services.kafkaServices.send({
-        topic: "monitor-events",
-        messages: [{ key, value }],
+        topic: "service-health",
+        messages: [{ key: 'key', value }],
       });
     }, 1000);
   }
